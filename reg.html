@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SMCH '26 | Registration Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --primary-navy: #0a2342;      
+            --accent-gold: #b38b45;       
+            --pure-white: #ffffff;
+            --bg-soft: #f8f9f8;
+            --header-font: 'Bebas Neue', sans-serif;
+            --body-font: 'Inter', sans-serif;
+            --radius: 24px;
+            --fast-ease: cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            font-family: var(--body-font); 
+            background: var(--pure-white); 
+            color: var(--primary-navy);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- NAVIGATION --- */
+        header.nav-bar {
+            width: 100%;
+            padding: 30px 5%;
+            display: flex;
+            justify-content: flex-end; 
+            align-items: center;
+            position: fixed;
+            top: 0;
+            background: transparent;
+            z-index: 3000;
+        }
+
+        .menu-btn {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            gap: 5px;
+        }
+
+        .bar {
+            width: 30px;
+            height: 2px;
+            background: var(--primary-navy);
+            transition: all 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+        }
+
+        .menu-btn.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--accent-gold); }
+        .menu-btn.open .bar:nth-child(2) { width: 0; opacity: 0; }
+        .menu-btn.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--accent-gold); }
+
+        .side-nav {
+            position: fixed;
+            top: 0;
+            right: -100%; 
+            width: 300px;
+            height: 100%;
+            background: var(--pure-white);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+            z-index: 2500;
+            display: flex;
+            flex-direction: column;
+            padding: 100px 40px;
+            transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .side-nav.active { right: 0; }
+        .nav-links { list-style: none; }
+        .nav-links li { margin-bottom: 25px; }
+        .nav-links a {
+            text-decoration: none;
+            font-family: var(--header-font);
+            font-size: 2rem;
+            color: var(--primary-navy);
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent-gold); padding-left: 10px; }
+
+        .overlay-bg {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 2000;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+        .overlay-bg.active { display: block; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content { 
+            flex: 1; 
+            max-width: 1100px; 
+            margin: 120px auto 50px; 
+            padding: 0 25px; 
+            width: 100%;
+        }
+        
+        .page-title { text-align: center; margin-bottom: 60px; }
+        .page-title h2 { 
+            font-size: 0.85rem; 
+            letter-spacing: 5px; 
+            text-transform: uppercase; 
+            color: var(--accent-gold); 
+            font-weight: 800; 
+            margin-bottom: 10px;
+        }
+        .page-title h1 { 
+            font-family: var(--header-font); 
+            font-size: clamp(3rem, 8vw, 5rem); 
+            line-height: 0.9; 
+            color: var(--primary-navy);
+        }
+
+        .sports-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 40px; 
+        }
+
+        .category-card { 
+            background: var(--bg-soft); 
+            border-radius: var(--radius); 
+            padding: 40px; 
+            border: 1px solid #eee;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .category-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 30px 60px rgba(10,35,66,0.08); 
+        }
+
+        .cat-header { 
+            font-family: var(--header-font); 
+            font-size: 2.2rem; 
+            margin-bottom: 25px; 
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .cat-header::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,0.05); }
+        
+        .game-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 20px 0; 
+            border-bottom: 1px solid rgba(0,0,0,0.03); 
+        }
+        .game-row:last-child { border: none; }
+        .game-name { font-weight: 600; font-size: 1.05rem; color: var(--primary-navy); }
+
+        .btn-reg { 
+            text-decoration: none; 
+            font-size: 0.7rem; 
+            font-weight: 800; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            text-transform: uppercase; 
+            transition: 0.3s; 
+            cursor: pointer; 
+            border: none;
+            letter-spacing: 1px;
+        }
+        .btn-reg.outdoor { background: var(--primary-navy); color: white; }
+        .btn-reg.indoor { background: var(--accent-gold); color: white; }
+        .btn-reg:hover { opacity: 0.8; transform: scale(1.05); }
+
+        /* --- ADMIN MODAL --- */
+        .modal-overlay { 
+            position: fixed; inset: 0; background: rgba(10, 35, 66, 0.9); 
+            z-index: 4000; display: none; align-items: center; justify-content: center; 
+            backdrop-filter: blur(8px); padding: 20px;
+        }
+        .pin-card {
+            background: var(--pure-white);
+            padding: 50px 40px;
+            border-radius: var(--radius);
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+        .pin-card input {
+            width: 100%; border: none; border-bottom: 2px solid #eee;
+            font-size: 2rem; text-align: center; outline: none;
+            margin-bottom: 30px; letter-spacing: 10px; color: var(--accent-gold);
+        }
+
+        /* --- THE PREMIUM FOOTER --- */
+        .site-footer { background: #fcfcfc; padding: 80px 0 30px; border-top: 1px solid #f0f0f0; margin-top: auto; }
+        .footer-wrapper { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; margin-bottom: 50px; max-width: 900px; margin: 0 auto; padding: 0 25px; }
+        .logo-footer { font-family: var(--header-font); font-size: 2.5rem; text-decoration: none; color: var(--primary-navy); line-height: 1; display: block; margin-bottom: 15px; }
+        .footer-brand p { font-size: 0.85rem; opacity: 0.6; max-width: 320px; }
+        .site-footer h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; color: var(--accent-gold); font-weight: 900; }
+        .footer-links-list { list-style: none; }
+        .footer-links-list li { margin-bottom: 12px; }
+        .footer-links-list li a { text-decoration: none; color: var(--primary-navy); opacity: 0.7; font-size: 0.9rem; font-weight: 600; transition: 0.2s; }
+        .footer-links-list li a:hover { color: var(--accent-gold); padding-left: 5px; opacity: 1; }
+        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid #eee; font-size: 0.7rem; font-weight: 700; opacity: 0.4; letter-spacing: 1px; text-transform: uppercase; }
+
+        @media (max-width: 768px) {
+            .footer-wrapper { grid-template-columns: 1fr; text-align: center; }
+            .footer-brand p { margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="nav-bar">
+        <div class="menu-btn" id="menuBtn">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </header>
+
+    <div class="overlay-bg" id="overlayBg"></div>
+
+    <nav class="side-nav" id="sideNav">
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="sports.html">Sports Week'26</a></li>
+            <li><a href="teams.html">Squad List</a></li>
+            <li><a href="reg.html" style="color: var(--accent-gold);">Registration</a></li>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #f0f0f0;">
+            <li><a onclick="openPinModal()" style="cursor: pointer; opacity: 0.4; font-size: 1rem;">Admin Login</a></li>
+        </ul>
+    </nav>
+
+    <div id="pinModal" class="modal-overlay">
+        <div class="pin-card">
+            <h2 style="font-family: var(--header-font); font-size: 2rem; margin-bottom: 20px;">ADMIN LOGIN</h2>
+            <input type="password" id="adminPin" maxlength="4" placeholder="••••">
+            <div style="display:flex; gap:10px;">
+                <button onclick="closePinModal()" style="flex:1; padding:15px; border:1px solid #eee; background:none; cursor:pointer; font-weight:800; border-radius:4px;">EXIT</button>
+                <button onclick="checkPin()" style="flex:1; padding:15px; border:none; background:var(--primary-navy); color:white; cursor:pointer; font-weight:800; border-radius:4px;">GO</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <header class="page-title">
+            <h2>SPORTS WEEK 2026</h2>
+            <h1>REGISTRATION HUB</h1>
+        </header>
+
+        <div class="sports-grid">
+            <div class="category-card">
+                <div class="cat-header" style="color: var(--primary-navy);">Outdoor</div>
+                <div class="game-row">
+                    <span class="game-name">Badminton</span>
+                    <button onclick="openForm('https://forms.gle/oNF6GybYPJQJq5sg6')" class="btn-reg outdoor">Register</button>
+                </div>
+                <div class="game-row">
+                    <span class="game-name">Sack Race</span>
+                    <button onclick="openForm('https://forms.gle/oNF6GybYPJQJq5sg6')" class="btn-reg outdoor">Register</button>
+                </div>
+                <div class="game-row">
+                    <span class="game-name">Octopus Race</span>
+                    <button onclick="openForm('https://forms.gle/oNF6GybYPJQJq5sg6')" class="btn-reg outdoor">Register</button>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <div class="cat-header" style="color: var(--accent-gold);">Indoor</div>
+                <div class="game-row">
+                    <span class="game-name">Table Tennis</span>
+                    <button onclick="openForm('https://forms.gle/YCv8epJgWqdAukFS8')" class="btn-reg indoor">Register</button>
+                </div>
+                <div class="game-row">
+                    <span class="game-name">Chess</span>
+                    <button onclick="openForm('https://forms.gle/YCv8epJgWqdAukFS8')" class="btn-reg indoor">Register</button>
+                </div>
+                <div class="game-row">
+                    <span class="game-name">Carrom</span>
+                    <button onclick="openForm('https://forms.gle/YCv8epJgWqdAukFS8')" class="btn-reg indoor">Register</button>
+                </div>
+                <div class="game-row">
+                    <span class="game-name">Ludo</span>
+                    <button onclick="openForm('https://forms.gle/YCv8epJgWqdAukFS8')" class="btn-reg indoor">Register</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-wrapper">
+            <div class="footer-brand">
+                <a href="index.html" class="logo-footer">SMCH SPORTS<br>SOCIETY</a>
+                <p>Establishing a legacy of excellence and sportsmanship.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Navigation</h4>
+                <ul class="footer-links-list">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="sports.html">Sports Week</a></li>
+                    <li><a href="team.html">Squad List</a></li>
+                    <li><a href="reg.html">Registration</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Connect</h4>
+                <ul class="footer-links-list">
+                    <li><a href="https://www.facebook.com/smch.sportssociety">Facebook</a></li>
+                    <li><a href="mailto:smchsportssociety@gmail.com">Email Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 SMCH SPORTS SOCIETY. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sideNav = document.getElementById('sideNav');
+        const overlayBg = document.getElementById('overlayBg');
+
+        function toggleMenu() {
+            menuBtn.classList.toggle('open');
+            sideNav.classList.toggle('active');
+            overlayBg.classList.toggle('active');
+            document.body.style.overflow = sideNav.classList.contains('active') ? 'hidden' : 'auto';
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        overlayBg.addEventListener('click', toggleMenu);
+
+        function openPinModal() {
+            if(sideNav.classList.contains('active')) toggleMenu();
+            document.getElementById('pinModal').style.display = 'flex';
+        }
+        function closePinModal() { document.getElementById('pinModal').style.display = 'none'; }
+        
+        function checkPin() {
+            if(document.getElementById('adminPin').value === "2601") {
+                window.location.href = "master_admin.html";
+            } else { alert("Invalid PIN"); document.getElementById('adminPin').value = ''; }
+        }
+
+        function openForm(url) { window.open(url, '_blank'); }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('pinModal')) closePinModal();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SMCH | Master Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --primary-navy: #0a2342;      
+            --accent-gold: #b38b45;       
+            --pure-white: #ffffff;
+            --bg-soft: #f8f9f8;
+            --header-font: 'Bebas Neue', sans-serif;
+            --body-font: 'Inter', sans-serif;
+            --radius: 24px;
+            --fast-ease: cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            font-family: var(--body-font); 
+            background: var(--bg-soft); 
+            color: var(--primary-navy);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- MASTER UI --- */
+        .master-container { 
+            width: 100%; 
+            max-width: 450px; 
+            padding: 20px; 
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .header-section { margin-bottom: 40px; }
+        .header-section h1 { 
+            font-size: 0.75rem; 
+            letter-spacing: 0.5em; 
+            color: var(--accent-gold); 
+            text-transform: uppercase; 
+            margin-bottom: 5px; 
+            font-weight: 900; 
+        }
+        .header-section p { 
+            font-family: var(--header-font); 
+            font-size: clamp(3rem, 10vw, 4.5rem); 
+            margin: 0; 
+            line-height: 0.9; 
+        }
+
+        .admin-grid { display: grid; gap: 15px; }
+        .admin-card { 
+            background: var(--pure-white); 
+            border: 1px solid #eee; 
+            border-radius: var(--radius); 
+            padding: 25px; 
+            text-decoration: none; 
+            color: var(--primary-navy); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            transition: 0.4s var(--fast-ease); 
+            cursor: pointer; 
+        }
+        .admin-card:hover { 
+            border-color: var(--accent-gold); 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 30px rgba(10, 35, 66, 0.08); 
+        }
+        
+        .card-info { text-align: left; }
+        .card-info span { 
+            display: block; 
+            font-size: 0.6rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            color: var(--accent-gold); 
+            letter-spacing: 1.5px; 
+            margin-bottom: 4px; 
+        }
+        .card-info h2 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+        .icon-box { 
+            width: 48px; 
+            height: 48px; 
+            background: var(--bg-soft); 
+            border-radius: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.4rem; 
+        }
+
+        /* --- FIXED BOTTOM LOGOUT (MATCHES HOME DESIGN) --- */
+        .logout-footer {
+            position: fixed;
+            bottom: 40px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .logout-btn {
+            cursor: pointer; 
+            opacity: 0.4; 
+            font-size: 1rem; 
+            text-decoration: none;
+            color: var(--primary-navy);
+            transition: 0.3s;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .logout-btn:hover { opacity: 1; color: #d32f2f; }
+
+        /* --- PIN MODAL --- */
+        .pin-overlay { 
+            position: fixed; inset: 0; background: rgba(10, 35, 66, 0.9); 
+            display: none; align-items: center; justify-content: center; 
+            z-index: 5000; backdrop-filter: blur(8px); padding: 20px;
+        }
+        .pin-overlay.active { display: flex; }
+        .pin-card { 
+            background: var(--pure-white); 
+            padding: 50px 40px; 
+            border-radius: var(--radius); 
+            width: 100%; 
+            max-width: 350px; 
+            text-align: center; 
+        }
+        
+        #pinInput { 
+            width: 100%; border: none; border-bottom: 2px solid #eee; 
+            font-size: 2rem; text-align: center; outline: none; 
+            margin-bottom: 30px; letter-spacing: 10px; 
+            color: var(--accent-gold); background: transparent;
+        }
+        .pin-actions { display: flex; gap: 10px; }
+        .pin-btn { flex: 1; padding: 15px; border-radius: 4px; border: none; font-weight: 800; cursor: pointer; }
+        .pin-btn.cancel { background: none; border: 1px solid #eee; }
+        .pin-btn.confirm { background: var(--primary-navy); color: white; }
+        
+        .error-msg { 
+            color: #d32f2f; font-size: 0.7rem; font-weight: 800; 
+            margin-top: 15px; display: none; text-transform: uppercase; letter-spacing: 1px; 
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="master-container">
+        <div class="header-section">
+            <h1>Administration</h1>
+            <p>MASTER CONTROL</p>
+        </div>
+
+        <div class="admin-grid">
+            <div class="admin-card" data-url="cric_admin.html">
+                <div class="card-info"><span>Tournament Management</span><h2>Cricket Console</h2></div>
+                <div class="icon-box">🏏</div>
+            </div>
+            <div class="admin-card" data-url="foot_admin.html">
+                <div class="card-info"><span>Tournament Management</span><h2>Football Console</h2></div>
+                <div class="icon-box">⚽</div>
+            </div>
+            <div class="admin-card" data-url="team_admin.html">
+                <div class="card-info"><span>Squad Management</span><h2>Team Rosters</h2></div>
+                <div class="icon-box">📋</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="logout-footer">
+        <a href="index.html" class="logout-btn">Secure Logout</a>
+    </div>
+
+    <div id="pinOverlay" class="pin-overlay">
+        <div class="pin-card" id="pinCard">
+            <h2 style="font-family: var(--header-font); font-size: 2rem; margin-bottom: 20px; color: var(--primary-navy);">ACCESS CONSOLE</h2>
+            <input type="password" id="pinInput" placeholder="••••" maxlength="4" autocomplete="off">
+            <div class="pin-actions">
+                <button class="pin-btn cancel" onclick="closePinPortal()">EXIT</button>
+                <button class="pin-btn confirm" onclick="validatePin()">GO</button>
+            </div>
+            <p id="pinError" class="error-msg">Invalid PIN. Access Denied.</p>
+        </div>
+    </div>
+
+    <script>
+        let targetUrl = "";
+        const pins = {
+            "foot_admin.html": "6164",
+            "cric_admin.html": "0809",
+            "team_admin.html": "3640"
+        };
+
+        document.querySelectorAll('.admin-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                if (url && pins[url]) {
+                    targetUrl = url;
+                    document.getElementById('pinOverlay').classList.add('active');
+                    const input = document.getElementById('pinInput');
+                    input.value = "";
+                    setTimeout(() => input.focus(), 100);
+                }
+            });
+        });
+
+        function closePinPortal() {
+            document.getElementById('pinOverlay').classList.remove('active');
+            document.getElementById('pinError').style.display = "none";
+            targetUrl = "";
+        }
+
+        function validatePin() {
+            const val = document.getElementById('pinInput').value;
+            if (val === pins[targetUrl]) {
+                window.location.href = targetUrl;
+            } else {
+                document.getElementById('pinError').style.display = "block";
+                document.getElementById('pinInput').value = "";
+                const card = document.getElementById('pinCard');
+                card.style.transform = "translateX(10px)";
+                setTimeout(() => card.style.transform = "translateX(-10px)", 50);
+                setTimeout(() => card.style.transform = "translateX(0)", 100);
+            }
+        }
+
+        document.getElementById('pinInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') validatePin();
+        });
+
+        window.onclick = function(e) {
+            if (e.target == document.getElementById('pinOverlay')) closePinPortal();
+        }
+    </script>
+</body>
+</html>
