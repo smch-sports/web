@@ -269,7 +269,6 @@
     <main class="container">
         <div class="team-grid">
             <script>
-                // Map the internal keys to the display names
                 const teamLabels = {
                     "Doc A": "SMCH Teacher's",
                     "Doc B": "SMCH Doctor's",
@@ -335,12 +334,19 @@
     </footer>
 
     <script>
-        // Manual hardcoded roster for Batch 16
         const staticRosters = {
             "16": [
-                "Miskat", "Mustaqim", "Saidul (VC)", "Salauddin (C)", 
+                "Salauddin (C)", "Saidul (VC)", "Miskat", "Mustaqim", 
                 "Ashraf", "Shahed", "Zishan", "Kazem", "Omar", "Asif", 
                 "Makki", "Faisal", "Sakib", "Robayet", "Shoyeb", "Debayan", "Arman"
+            ],
+            "17": [
+                "Maruf (C)", "Abrar (VC)", "Abid", "Shoaib", "Bappy", "Ikloo", 
+                "Asrar", "Rudra", "Emon", "Saad", "Sifat"
+            ],
+            "18": [
+                "Yasin (C)", "Arik (VC)", "Toky", "Kareeb", "Rohan", "Wafi",
+                "Monirul", "Sihamul", "Labib", "Jamiul", "Sakib", "Utsha", "Tajwar", "Daiyan"
             ]
         };
 
@@ -371,10 +377,20 @@
         }
 
         function showDynamicRoster(teamKey) {
-            // Priority: Hardcoded static list -> LocalStorage (Admin changes) -> Default message
             const allRosters = JSON.parse(localStorage.getItem('smch_rosters') || "{}");
-            const members = staticRosters[teamKey] || allRosters[teamKey] || ["Selection Pending"];
+            let members = staticRosters[teamKey] || allRosters[teamKey] || ["Selection Pending"];
             
+            // Logic to move (C) and (VC) to top regardless of input order
+            if(Array.isArray(members) && members.length > 1) {
+                members.sort((a, b) => {
+                    if (a.includes('(C)')) return -1;
+                    if (b.includes('(C)')) return 1;
+                    if (a.includes('(VC)')) return -1;
+                    if (b.includes('(VC)')) return 1;
+                    return 0;
+                });
+            }
+
             const overlay = document.getElementById('rosterOverlay');
             const title = document.getElementById('displayTeamName');
             const list = document.getElementById('memberList');
