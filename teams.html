@@ -155,7 +155,7 @@
         .team-card img { width: 70%; height: auto; object-fit: contain; }
         .team-card h3 { 
             font-family: var(--header-font); 
-            font-size: 1.8rem; 
+            font-size: 1.5rem; 
             letter-spacing: 1px;
             text-transform: uppercase;
         }
@@ -170,6 +170,7 @@
             background: var(--pure-white); width: 100%; max-width: 700px; 
             border-radius: var(--radius); padding: 50px 40px; 
             position: relative; animation: slideUp 0.4s var(--fast-ease);
+            max-height: 90vh; overflow-y: auto;
         }
         @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
@@ -268,13 +269,25 @@
     <main class="container">
         <div class="team-grid">
             <script>
-                const teams = ["Doc A", "Doc B", "Intern", "16", "17", "18", "19", "20"];
-                teams.forEach(t => {
-                    const label = (["Doc A", "Doc B", "Intern"].includes(t)) ? t : 'Batch ' + t;
+                // Map the internal keys to the display names
+                const teamLabels = {
+                    "Doc A": "SMCH Teacher's",
+                    "Doc B": "SMCH Doctor's",
+                    "Intern": "Intern",
+                    "16": "Batch 16",
+                    "17": "Batch 17",
+                    "18": "Batch 18",
+                    "19": "Batch 19",
+                    "20": "Batch 20"
+                };
+
+                const teamOrder = ["Doc A", "Doc B", "Intern", "16", "17", "18", "19", "20"];
+                
+                teamOrder.forEach(t => {
                     document.write(`
                         <div class="team-card" onclick="showDynamicRoster('${t}')">
                             <div class="logo-circle"><img src="logo.jpg" alt="Logo"></div>
-                            <h3>${label}</h3>
+                            <h3>${teamLabels[t]}</h3>
                         </div>
                     `);
                 });
@@ -322,6 +335,15 @@
     </footer>
 
     <script>
+        // Manual hardcoded roster for Batch 16
+        const staticRosters = {
+            "16": [
+                "Miskat", "Mustaqim", "Saidul (VC)", "Salauddin (C)", 
+                "Ashraf", "Shahed", "Zishan", "Kazem", "Omar", "Asif", 
+                "Makki", "Faisal", "Sakib", "Robayet", "Shoyeb", "Debayan", "Arman"
+            ]
+        };
+
         const menuBtn = document.getElementById('menuBtn');
         const sideNav = document.getElementById('sideNav');
         const overlayBg = document.getElementById('overlayBg');
@@ -349,14 +371,15 @@
         }
 
         function showDynamicRoster(teamKey) {
+            // Priority: Hardcoded static list -> LocalStorage (Admin changes) -> Default message
             const allRosters = JSON.parse(localStorage.getItem('smch_rosters') || "{}");
-            const members = allRosters[teamKey] || ["Selection Pending"];
+            const members = staticRosters[teamKey] || allRosters[teamKey] || ["Selection Pending"];
             
             const overlay = document.getElementById('rosterOverlay');
             const title = document.getElementById('displayTeamName');
             const list = document.getElementById('memberList');
 
-            title.innerText = (["Doc A", "Doc B", "Intern"].includes(teamKey)) ? teamKey : "Batch " + teamKey;
+            title.innerText = teamLabels[teamKey];
             list.innerHTML = ''; 
 
             members.forEach(m => {
