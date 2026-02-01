@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SMCH '26 | Cricket Schedule</title>
+    <title>SMCH '26 | CRICKET CHAMPIONSHIP</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     
     <style>
@@ -12,12 +12,14 @@
             --accent-gold: #b38b45;       
             --pure-white: #ffffff;
             --bg-soft: #f8f9f8;
+            --live-green: #2ecc71;
             --header-font: 'Bebas Neue', sans-serif;
             --body-font: 'Inter', sans-serif;
-            --radius: 20px;
+            --radius: 24px;
+            --fast-ease: cubic-bezier(0.2, 1, 0.3, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; text-transform: uppercase; }
 
         body { 
             font-family: var(--body-font); 
@@ -31,30 +33,20 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- NAVIGATION --- */
-        header.nav-bar {
-            width: 100%; padding: 30px 5%; display: flex; justify-content: flex-end; 
-            align-items: center; position: fixed; top: 0; background: transparent; z-index: 3000;
-        }
-
+        /* --- NAVIGATION (EXACT HOME MATCH) --- */
+        header.nav-bar { width: 100%; padding: 30px 5%; display: flex; justify-content: flex-end; align-items: center; position: fixed; top: 0; background: transparent; z-index: 3000; }
         .menu-btn { cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 40px; height: 40px; gap: 5px; z-index: 4000; }
         .bar { width: 30px; height: 2px; background: var(--primary-navy); transition: all 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6); }
         .menu-btn.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--accent-gold); }
         .menu-btn.open .bar:nth-child(2) { width: 0; opacity: 0; }
         .menu-btn.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--accent-gold); }
 
-        .side-nav {
-            position: fixed; top: 0; right: -100%; width: 300px; height: 100%;
-            background: var(--pure-white); box-shadow: -10px 0 30px rgba(0,0,0,0.05);
-            z-index: 2500; display: flex; flex-direction: column; padding: 100px 40px;
-            transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
-        }
+        .side-nav { position: fixed; top: 0; right: -100%; width: 300px; height: 100%; background: var(--pure-white); box-shadow: -10px 0 30px rgba(0,0,0,0.05); z-index: 2500; display: flex; flex-direction: column; padding: 100px 40px; transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1); }
         .side-nav.active { right: 0; }
         .nav-links { list-style: none; }
         .nav-links li { margin-bottom: 25px; }
-        .nav-links a { text-decoration: none; font-family: var(--header-font); font-size: 2rem; color: var(--primary-navy); text-transform: uppercase; transition: 0.3s; }
+        .nav-links a { text-decoration: none; font-family: var(--header-font); font-size: 2rem; color: var(--primary-navy); transition: 0.3s; }
         .nav-links a:hover { color: var(--accent-gold); padding-left: 10px; }
-
         .overlay-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2000; display: none; backdrop-filter: blur(4px); }
         .overlay-bg.active { display: block; }
 
@@ -63,31 +55,59 @@
         .pin-card { background: var(--pure-white); padding: 50px 40px; border-radius: var(--radius); text-align: center; width: 100%; max-width: 350px; }
         .pin-card input { width: 100%; border: none; border-bottom: 2px solid #eee; font-size: 2rem; text-align: center; outline: none; margin-bottom: 30px; letter-spacing: 10px; color: var(--accent-gold); }
 
-        /* --- CONTENT --- */
-        .container { flex: 1; max-width: 1000px; margin: 120px auto 80px; padding: 0 25px; width: 100%; }
+        /* --- CONTENT & HERO --- */
+        .container { flex: 1; max-width: 1100px; margin: 120px auto 80px; padding: 0 25px; width: 100%; }
         
-        .section-header { margin: 60px 0 30px; padding-bottom: 10px; border-bottom: 2px solid var(--accent-gold); display: flex; align-items: baseline; justify-content: space-between; }
-        .section-header h2 { font-family: var(--header-font); font-size: 3rem; letter-spacing: 2px; }
-        .section-header span { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; opacity: 0.5; letter-spacing: 2px; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .reveal { opacity: 0; transition: all 0.4s var(--fast-ease); }
+        .reveal.active { animation: fadeInUp 0.4s forwards; }
 
-        .groups-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .group-card { background: var(--bg-soft); border-radius: var(--radius); padding: 30px; border: 1px solid transparent; }
-        .group-card h3 { font-family: var(--header-font); font-size: 2.2rem; color: var(--accent-gold); margin-bottom: 15px; }
-        .group-list { list-style: none; font-weight: 700; }
-        .group-list li { padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem; }
+        .hero-title { text-align: center; margin-bottom: 60px; }
+        .hero-title h1 { font-family: var(--header-font); font-size: clamp(3.5rem, 8vw, 5rem); line-height: 0.8; }
 
-        .schedule-table-wrapper { background: white; border-radius: var(--radius); overflow: hidden; border: 1px solid #eee; margin-bottom: 50px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #fcfcfc; text-align: left; padding: 20px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #999; border-bottom: 1px solid #eee; }
-        td { padding: 20px; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; font-weight: 800; }
-        .vs-text { font-family: var(--header-font); color: var(--accent-gold); margin: 0 10px; font-size: 1.2rem; }
-        .match-id { color: var(--accent-gold); }
+        /* --- COMPACT MATCH CARD --- */
+        .featured-match {
+            background: var(--primary-navy); color: white; border-radius: var(--radius);
+            padding: 25px 20px; margin-bottom: 50px; text-align: center; position: relative;
+            overflow: hidden; border: 1px solid rgba(179, 139, 69, 0.3); max-width: 700px; margin-left: auto; margin-right: auto;
+        }
+        .featured-match::before { content: "UPCOMING"; position: absolute; top: 12px; left: -35px; background: var(--accent-gold); padding: 3px 40px; transform: rotate(-45deg); font-size: 0.6rem; font-weight: 900; }
+        .match-teams { display: flex; justify-content: center; align-items: center; gap: 20px; margin: 10px 0 5px; }
+        .match-teams h3 { font-family: var(--header-font); font-size: 2rem; letter-spacing: 1px; }
+        .match-vs { color: var(--accent-gold); font-size: 1.2rem; opacity: 0.6; font-family: var(--header-font); }
+        #timerDisplay { font-weight: 900; font-size: 1rem; color: var(--accent-gold); margin-bottom: 12px; display: block; }
+        .progress-container { width: 60%; height: 4px; background: rgba(255,255,255,0.1); margin: 0 auto 15px; border-radius: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 100%; background: var(--accent-gold); transition: width 1s linear; }
+        .match-details { background: rgba(255,255,255,0.05); display: inline-block; padding: 6px 18px; border-radius: 50px; font-weight: 800; font-size: 0.75rem; color: var(--accent-gold); }
 
-        /* --- FOOTER (EXACT DUPLICATE) --- */
+        /* --- STICKY RESPONSIVE TABLES --- */
+        .section-header { margin: 60px 0 25px; padding-bottom: 10px; border-bottom: 2px solid var(--accent-gold); display: flex; align-items: center; justify-content: space-between; }
+        .section-header h2 { font-family: var(--header-font); font-size: 2.8rem; }
+        .points-table-wrapper { background: white; border-radius: var(--radius); overflow: hidden; border: 1px solid #eee; margin-bottom: 40px; }
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 500px; }
+        th { background: #fcfcfc; text-align: left; padding: 20px; font-size: 0.75rem; color: #999; border-bottom: 1px solid #eee; }
+        td { padding: 20px; border-bottom: 1px solid #f9f9f9; font-size: 0.85rem; font-weight: 800; }
+        
+        table td:first-child, table th:first-child { position: sticky; left: 0; z-index: 10; background: white; min-width: 140px; box-shadow: 4px 0 8px rgba(0,0,0,0.02); }
+        table th:first-child { background: #fcfcfc; }
+        .pts-col { color: var(--accent-gold); font-size: 1.1rem; text-align: center; }
+
+        .live-indicator { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.75rem; color: var(--live-green); }
+        .dot { height: 10px; width: 10px; background-color: var(--live-green); border-radius: 50%; animation: pulse-green 1.2s infinite; }
+
+        /* --- KNOCKOUT CARDS (RESTORED DETAILS) --- */
+        .knockout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 50px; }
+        .ko-card { background: var(--bg-soft); border-radius: var(--radius); padding: 30px; border: 1px solid rgba(0,0,0,0.03); }
+        .ko-card h3 { font-family: var(--header-font); font-size: 2rem; color: var(--accent-gold); margin-bottom: 20px; }
+        .final-card { border: 2px solid var(--accent-gold) !important; background: #fffcf5 !important; }
+        .legacy-card { background: var(--primary-navy) !important; color: white !important; }
+
+        /* --- PREMIUM FOOTER (EXACT HOME MATCH) --- */
         .site-footer { background: #fcfcfc; padding: 80px 0 30px; border-top: 1px solid #f0f0f0; margin-top: auto; }
-        .footer-wrapper { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; margin-bottom: 50px; max-width: 1000px; margin: 0 auto; padding: 0 25px; }
+        .footer-wrapper { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; margin-bottom: 50px; max-width: 900px; margin: 0 auto; padding: 0 25px; }
         .logo-footer { font-family: var(--header-font); font-size: 2.5rem; text-decoration: none; color: var(--primary-navy); line-height: 1; display: block; margin-bottom: 15px; }
-        .footer-brand p { font-size: 0.85rem; opacity: 0.6; max-width: 320px; }
+        .footer-brand p { font-size: 0.85rem; opacity: 0.6; max-width: 320px; text-transform: none; }
         .site-footer h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; color: var(--accent-gold); font-weight: 900; }
         .footer-links-list { list-style: none; }
         .footer-links-list li { margin-bottom: 12px; }
@@ -97,20 +117,14 @@
 
         @media (max-width: 768px) {
             .footer-wrapper { grid-template-columns: 1fr; text-align: center; }
-            .footer-brand p { margin: 0 auto; }
             .section-header h2 { font-size: 2.2rem; }
-            td { padding: 15px 10px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 
     <header class="nav-bar">
-        <div class="menu-btn" id="menuBtn">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
+        <div class="menu-btn" id="menuBtn"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
     </header>
 
     <div class="overlay-bg" id="overlayBg"></div>
@@ -118,7 +132,7 @@
     <nav class="side-nav" id="sideNav">
         <ul class="nav-links">
             <li><a href="index.html">Home</a></li>
-            <li><a href="sports.html" style="color: var(--accent-gold);">Sports Week</a></li>
+            <li><a href="sports.html" style="color: var(--accent-gold);">Sports Week'26</a></li>
             <li><a href="teams.html">Squad List</a></li>
             <li><a href="reg.html">Registration</a></li>
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #f0f0f0;">
@@ -137,73 +151,83 @@
         </div>
     </div>
 
-    <div class="container">
-        <header style="text-align: center; margin-bottom: 80px;">
-            <h1 style="font-family: var(--header-font); font-size: 5rem; line-height: 0.8;">Cricket<br><span style="color: var(--accent-gold);">Schedule</span></h1>
-        </header>
-
-        <div class="section-header">
-            <h2>Group Standings</h2>
-            <span>Pool A & B</span>
+    <main class="container">
+        <div class="hero-title">
+            <h1>SPORTS WEEK’26<br><span style="color: var(--accent-gold);">CRICKET</span></h1>
         </div>
 
-        <div class="groups-grid">
-            <div class="group-card">
-                <h3>Group A</h3>
-                <ul class="group-list">
-                    <li>SMCH Teachers</li>
-                    <li>Canopus 16</li>
-                    <li>Aniruddho 19</li>
-                    <li>Addonto 20</li>
-                </ul>
+        <div class="reveal featured-match">
+            <div class="match-teams">
+                <h3>DOCTOR</h3><span class="match-vs">VS</span><h3>ANIRUDDHO 19</h3>
             </div>
-            <div class="group-card">
-                <h3>Group B</h3>
-                <ul class="group-list">
-                    <li>SMCH Doctors</li>
-                    <li>SMCH Interns</li>
-                    <li>Aronnyak 17</li>
-                    <li>Onupreron 18</li>
-                </ul>
+            <div id="timerDisplay">UPDATING...</div>
+            <div class="progress-container"><div id="countdownBar" class="progress-bar"></div></div>
+            <div class="match-details">FEBRUARY 02, 2026 • 11:45 AM</div>
+        </div>
+
+        <div class="reveal">
+            <div class="section-header">
+                <h2>GROUP A</h2>
+                <div class="live-indicator"><span class="dot"></span>LIVE UPDATES</div>
+            </div>
+            <div class="points-table-wrapper"><div class="table-scroll"><table>
+                <thead><tr><th>TEAM</th><th>M</th><th>W</th><th>L</th><th>NRR</th><th class="pts-col">PTS</th></tr></thead>
+                <tbody>
+                    <tr><td>DOCTOR</td><td>2</td><td>2</td><td>0</td><td style="color:#2ecc71">+1.97</td><td class="pts-col">4</td></tr>
+                    <tr><td>ADDONTO 20</td><td>3</td><td>2</td><td>1</td><td style="color:#2ecc71">+2.84</td><td class="pts-col">4</td></tr>
+                    <tr><td>CANOPUS 16</td><td>3</td><td>1</td><td>2</td><td style="color:#e74c3c">-0.34</td><td class="pts-col">2</td></tr>
+                    <tr><td>ANIRUDDHO 19</td><td>2</td><td>0</td><td>2</td><td style="color:#e74c3c">-4.47</td><td class="pts-col">0</td></tr>
+                </tbody>
+            </table></div></div>
+        </div>
+
+        <div class="reveal">
+            <div class="section-header"><h2>GROUP B</h2></div>
+            <div class="points-table-wrapper"><div class="table-scroll"><table>
+                <thead><tr><th>TEAM</th><th>M</th><th>W</th><th>L</th><th>NRR</th><th class="pts-col">PTS</th></tr></thead>
+                <tbody>
+                    <tr><td>INTERN</td><td>3</td><td>3</td><td>0</td><td style="color:#2ecc71">+2.67</td><td class="pts-col">6</td></tr>
+                    <tr><td>ARONNYAK 17</td><td>3</td><td>2</td><td>1</td><td style="color:#e74c3c">-0.17</td><td class="pts-col">4</td></tr>
+                    <tr><td>ONUPRERON 18</td><td>3</td><td>1</td><td>2</td><td style="color:#e74c3c">-2.59</td><td class="pts-col">2</td></tr>
+                    <tr><td>DOC B</td><td>3</td><td>0</td><td>3</td><td>0.00</td><td class="pts-col">0</td></tr>
+                </tbody>
+            </table></div></div>
+        </div>
+
+        <div class="reveal">
+            <div class="section-header"><h2>FINALS BRACKET</h2></div>
+            <div class="knockout-grid">
+                <div class="ko-card">
+                    <h3>SEMI FINAL 01</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; justify-content:space-between; font-weight:900;"><span>TO BE DETERMINED</span> <span style="opacity:0.4">1ST A</span></div>
+                        <div style="text-align:center; color:var(--accent-gold); font-family:var(--header-font);">VS</div>
+                        <div style="display:flex; justify-content:space-between; font-weight:900;"><span>ARONNYAK 17</span> <span style="opacity:0.4">2ND B</span></div>
+                    </div>
+                </div>
+                <div class="ko-card">
+                    <h3>SEMI FINAL 02</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; justify-content:space-between; font-weight:900;"><span>INTERN</span> <span style="opacity:0.4">1ST B</span></div>
+                        <div style="text-align:center; color:var(--accent-gold); font-family:var(--header-font);">VS</div>
+                        <div style="display:flex; justify-content:space-between; font-weight:900;"><span>TO BE DETERMINED</span> <span style="opacity:0.4">2ND A</span></div>
+                    </div>
+                </div>
+                <div class="ko-card final-card">
+                    <h3>GRAND FINAL</h3>
+                    <div style="text-align:center; font-weight:900; letter-spacing: 2px; padding: 10px 0;">TO BE DETERMINED</div>
+                </div>
+                <div class="ko-card legacy-card">
+                    <h3 style="color: var(--accent-gold);">LEGACY CHALLENGE</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; justify-content:space-between; font-weight:900;"><span>2026 CHAMPIONS</span></div>
+                        <div style="text-align:center; color:var(--accent-gold); font-family:var(--header-font); opacity: 0.6;">VS</div>
+                        <div style="display:flex; justify-content:space-between; font-weight:900;"><span>2025 CHAMPIONS (SMCH STAFF)</span></div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="section-header">
-            <h2>01 February</h2>
-            <span>Sunday Schedule</span>
-        </div>
-        <div class="schedule-table-wrapper">
-            <table>
-                <thead><tr><th>#</th><th>Time Slot</th><th>Fixture</th></tr></thead>
-                <tbody>
-                    <tr><td class="match-id">01</td><td>12:30 – 1:00 PM</td><td>Teachers <span class="vs-text">VS</span> Canopus 16</td></tr>
-                    <tr><td class="match-id">02</td><td>1:00 – 1:30 PM</td><td>Doctors <span class="vs-text">VS</span> Interns</td></tr>
-                    <tr><td class="match-id">03</td><td>1:30 – 2:00 PM</td><td>Teachers <span class="vs-text">VS</span> Addonto 20</td></tr>
-                    <tr><td class="match-id">04</td><td>2:00 – 2:30 PM</td><td>Aronnyak 17 <span class="vs-text">VS</span> Onupreron 18</td></tr>
-                    <tr><td class="match-id">05</td><td>2:30 – 3:00 PM</td><td>Aniruddho 19 <span class="vs-text">VS</span> Addonto 20</td></tr>
-                    <tr><td class="match-id">06</td><td>3:00 – 3:30 PM</td><td>Interns <span class="vs-text">VS</span> Aronnyak 17</td></tr>
-                    <tr><td class="match-id">07</td><td>3:30 – 4:00 PM</td><td>Canopus 16 <span class="vs-text">VS</span> Aniruddho 19</td></tr>
-                    <tr><td class="match-id">08</td><td>4:00 – 4:30 PM</td><td>Doctors <span class="vs-text">VS</span> Onupreron 18</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="section-header">
-            <h2>02 February</h2>
-            <span>Monday Schedule</span>
-        </div>
-        <div class="schedule-table-wrapper">
-            <table>
-                <thead><tr><th>#</th><th>Time Slot</th><th>Fixture</th></tr></thead>
-                <tbody>
-                    <tr><td class="match-id">09</td><td>12:00 – 12:30 PM</td><td>Teachers <span class="vs-text">VS</span> Aniruddho 19</td></tr>
-                    <tr><td class="match-id">10</td><td>12:30 – 1:00 PM</td><td>Doctors <span class="vs-text">VS</span> Aronnyak 17</td></tr>
-                    <tr><td class="match-id">11</td><td>1:00 – 1:30 PM</td><td>Canopus 16 <span class="vs-text">VS</span> Addonto 20</td></tr>
-                    <tr><td class="match-id">12</td><td>1:30 – 2:00 PM</td><td>Interns <span class="vs-text">VS</span> Onupreron 18</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    </main>
 
     <footer class="site-footer">
         <div class="footer-wrapper">
@@ -228,9 +252,7 @@
                 </ul>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>© 2026 SMCH SPORTS SOCIETY. ALL RIGHTS RESERVED.</p>
-        </div>
+        <div class="footer-bottom"><p>© 2026 SMCH SPORTS SOCIETY. ALL RIGHTS RESERVED.</p></div>
     </footer>
 
     <script>
@@ -244,15 +266,41 @@
             overlayBg.classList.toggle('active');
             document.body.style.overflow = sideNav.classList.contains('active') ? 'hidden' : 'auto';
         }
-
         menuBtn.addEventListener('click', toggleMenu);
         overlayBg.addEventListener('click', toggleMenu);
 
         function openPinModal() { if(sideNav.classList.contains('active')) toggleMenu(); document.getElementById('pinModal').style.display = 'flex'; }
         function closePinModal() { document.getElementById('pinModal').style.display = 'none'; }
-        function checkPin() { if(document.getElementById('adminPin').value === "2601") { window.location.href = "master_admin.html"; } else { alert("Invalid PIN"); document.getElementById('adminPin').value = ''; } }
-        window.onclick = function(event) { if (event.target == document.getElementById('pinModal')) closePinModal(); }
+        function checkPin() { if(document.getElementById('adminPin').value === "2601") { window.location.href = "cric_admin.html"; } else { alert("INVALID PIN"); } }
+
+        const targetDate = new Date("February 02, 2026 11:45:00").getTime();
+        const startRefDate = new Date("February 01, 2026 00:00:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            if (distance < 0) {
+                document.getElementById("timerDisplay").innerHTML = "MATCH IN PROGRESS";
+                document.getElementById("countdownBar").style.width = "0%";
+                return;
+            }
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+            document.getElementById("timerDisplay").innerHTML = h + "H " + m + "M " + s + "S REMAINING";
+            document.getElementById("countdownBar").style.width = ((distance / (targetDate - startRefDate)) * 100) + "%";
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                if (reveals[i].getBoundingClientRect().top < window.innerHeight - 100) { reveals[i].classList.add("active"); }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
     </script>
 </body>
 </html>
-
